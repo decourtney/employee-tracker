@@ -1,16 +1,24 @@
-"use strict";
 const Interrogator = require('./interrogator');
 const chalk = require('chalk');
+
 const interrogator = new Interrogator();
-async function init() {
-    displayTitle();
-    let answers = await interrogator.displayMainMenu();
-    console.log(answers);
+
+async function init()
+{
+  displayTitle();
+  let answers = await interrogator.displayMainMenu();
+  console.log(answers);
 }
-function displayTitle() {
-    console.log('\n\n\n\n\n\n');
-    console.log(chalk.whiteBright('+' + '-'.repeat(106) + '+'));
-    console.log(`|            ` + chalk.blackBright(`_____`) + `                                                                                         |
+
+
+
+
+function displayTitle()
+{
+  console.log('\n\n\n\n\n\n');
+  console.log(chalk.whiteBright('+' + '-'.repeat(106) + '+'));
+  console.log(
+    `|            ` + chalk.blackBright(`_____`) + `                                                                                         |
 |        ` + chalk.blackBright(`___/` + chalk.redBright(`O   O`) + `\\____`) + `       ` + chalk.yellowBright(`_______ .___  ___..______   __        ______  ____    ____ _______  _______`) + `  | 
 |       ` + chalk.blackBright(`/ ` + chalk.redBright(`O        O`) + `   \\`) + `     ` + chalk.yellowBright(`|   ____||   \\/   ||   _  \\ |  |      /  __  \\ \\   \\  /   /|   ____||   ____|`) + ` |
 |       ` + chalk.blackBright(`\\______________/`) + `     ` + chalk.yellowBright(`|  |__   |  \\  /  ||  |_)  ||  |     |  |  |  | \\   \\/   / |  |__   |  |__`) + `    |
@@ -25,6 +33,7 @@ function displayTitle() {
 |   ` + chalk.blackBright(`//         //     \\\\`) + `           ` + chalk.yellowBright(`|  |     |  |\\  \\-/  _____  \\|  \`----.|  .  \\ |  |____ |  |\\  \\----.`) + `    |
 |   ` + chalk.blackBright(`/\\        //       /\\`) + `         ` + chalk.yellowBright(`| __ |    | _| \`.____/     \\__\\\\______||__|\\__\\|_______|| _| \`._____|`) + `    |
 |             ` + chalk.blackBright(`/\\`) + `                                                                                           |`);
-    console.log(chalk.whiteBright('+' + '-'.repeat(106) + '+'));
+  console.log(chalk.whiteBright('+' + '-'.repeat(106) + '+'));
 }
+
 init();

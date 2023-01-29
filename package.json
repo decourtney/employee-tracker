@@ -17,9 +17,13 @@
   },
   "homepage": "https://github.com/decourtney/12-employee-tracker#readme",
   "dependencies": {
+    "chalk": "^4.1.2",
     "console.table": "^0.10.0",
     "dedent-js": "^1.0.1",
     "inquirer": "^8.2.4",
     "mysql2": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18"
   }
 }
