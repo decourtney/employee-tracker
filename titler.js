@@ -1,17 +1,17 @@
 "use strict";
-const Interrogator = require('./interrogator');
-const Titler = require('./titler');
-const interrogator = new Interrogator();
-const titler = new Titler();
-async function init() {
-    titler.displayTitle('main');
-    let answers = await interrogator.displayMainMenu();
-    console.log(answers);
-}
-function displayTitle() {
-    console.log('\n\n\n\n\n\n');
-    console.log(chalk.whiteBright('+' + '-'.repeat(106) + '+'));
-    console.log(`|            ` + chalk.blackBright(`_____`) + `                                                                                         |
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
+var _Titler_mainMenu;
+const chalk = require('chalk');
+class Titler {
+    constructor() {
+        _Titler_mainMenu.set(this, () => {
+            console.log('\n\n\n\n\n\n');
+            console.log(chalk.whiteBright('+' + '-'.repeat(106) + '+'));
+            console.log(`|            ` + chalk.blackBright(`_____`) + `                                                                                         |
 |        ` + chalk.blackBright(`___/` + chalk.redBright(`O   O`) + `\\____`) + `       ` + chalk.yellowBright(`_______ .___  ___..______   __        ______  ____    ____ _______  _______`) + `  | 
 |       ` + chalk.blackBright(`/ ` + chalk.redBright(`O        O`) + `   \\`) + `     ` + chalk.yellowBright(`|   ____||   \\/   ||   _  \\ |  |      /  __  \\ \\   \\  /   /|   ____||   ____|`) + ` |
 |       ` + chalk.blackBright(`\\______________/`) + `     ` + chalk.yellowBright(`|  |__   |  \\  /  ||  |_)  ||  |     |  |  |  | \\   \\/   / |  |__   |  |__`) + `    |
@@ -26,6 +26,17 @@ function displayTitle() {
 |   ` + chalk.blackBright(`//         //     \\\\`) + `           ` + chalk.yellowBright(`|  |     |  |\\  \\-/  _____  \\|  \`----.|  .  \\ |  |____ |  |\\  \\----.`) + `    |
 |   ` + chalk.blackBright(`/\\        //       /\\`) + `         ` + chalk.yellowBright(`| __ |    | _| \`.____/     \\__\\\\______||__|\\__\\|_______|| _| \`._____|`) + `    |
 |             ` + chalk.blackBright(`/\\`) + `                                                                                           |`);
-    console.log(chalk.whiteBright('+' + '-'.repeat(106) + '+'));
+            console.log(chalk.whiteBright('+' + '-'.repeat(106) + '+'));
+        });
+    }
+    displayTitle(val) {
+        let title;
+        switch (val) {
+            case 'main':
+                __classPrivateFieldGet(this, _Titler_mainMenu, "f").call(this);
+                break;
+        }
+    }
 }
-init();
+_Titler_mainMenu = new WeakMap();
+module.exports = Titler;
