@@ -12,39 +12,37 @@ class Interrogator {
         _Interrogator_instances.add(this);
     }
     async displayMainMenu() {
-        let answers;
-        while (true) {
-            let questions = __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_getQuestions).call(this, 'main');
-            answers = await __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_interrogate).call(this, questions);
-            if (answers.menuOptions === 'Exit') {
-                console.log('Exiting Interrogator');
-                break;
-            }
-            switch (answers.menuOptions) {
-                case 'View Data':
-                    console.log('user wants to view data');
-                    questions = __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_getQuestions).call(this, 'view');
-                    break;
-                case 'Add Data':
-                    console.log('user wants to add data');
-                    questions = __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_getQuestions).call(this, 'add');
-                    break;
-                case 'Update Data':
-                    console.log('user wants to update data');
-                    questions = __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_getQuestions).call(this, 'update');
-                    break;
-                case 'Delete Data':
-                    console.log('user wants to delete data');
-                    questions = __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_getQuestions).call(this, 'delete');
-                    break;
-                default:
-                    console.log('Selection Unaccounted For');
-            }
-            answers = await __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_interrogate).call(this, questions);
-            // Do stuff with returned data
-            console.log(answers);
+        let userInput = [];
+        let questions = __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_getQuestions).call(this, 'main');
+        userInput.push(await __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_interrogate).call(this, questions));
+        if (userInput[0].menuOptions === 'Exit') {
+            console.log('Exiting Interrogator');
+            return userInput;
         }
-        return answers;
+        switch (userInput[0].menuOptions) {
+            case 'View Data':
+                console.log('user wants to view data');
+                questions = __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_getQuestions).call(this, 'view');
+                break;
+            case 'Add Data':
+                console.log('user wants to add data');
+                questions = __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_getQuestions).call(this, 'add');
+                break;
+            case 'Update Data':
+                console.log('user wants to update data');
+                questions = __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_getQuestions).call(this, 'update');
+                break;
+            case 'Delete Data':
+                console.log('user wants to delete data');
+                questions = __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_getQuestions).call(this, 'delete');
+                break;
+            default:
+                console.log('Selection Unaccounted For');
+        }
+        userInput.push(await __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_interrogate).call(this, questions));
+        // Do stuff with returned data
+        // console.log(userInput);
+        return userInput;
     }
 }
 _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _Interrogator_getQuestions(menu) {

@@ -4,50 +4,47 @@ const cTable = require('console.table');
 
 class Interrogator
 {
-
   async displayMainMenu()
   {
-    let answers;
+    let userInput = [];
 
-    while (true)
+    let questions = this.#getQuestions('main');
+
+    userInput.push(await this.#interrogate(questions));
+    if (userInput[0].menuOptions === 'Exit') { console.log('Exiting Interrogator'); return userInput }
+
+    switch (userInput[0].menuOptions)
     {
-      let questions = this.#getQuestions('main');
-
-      answers = await this.#interrogate(questions);
-      if (answers.menuOptions === 'Exit') { console.log('Exiting Interrogator'); break; }
-
-      switch (answers.menuOptions)
-      {
-        case 'View Data':
-          console.log('user wants to view data');
-          questions = this.#getQuestions('view');
-          break;
-        case 'Add Data':
-          console.log('user wants to add data');
-          questions = this.#getQuestions('add');
-          break;
-        case 'Update Data':
-          console.log('user wants to update data');
-          questions = this.#getQuestions('update');
-          break;
-        case 'Delete Data':
-          console.log('user wants to delete data');
-          questions = this.#getQuestions('delete');
-          break;
-        default:
-          console.log('Selection Unaccounted For');
-      }
-
-      answers = await this.#interrogate(questions);
-      // Do stuff with returned data
-      console.log(answers);
-
-
+      case 'View Data':
+        console.log('user wants to view data');
+        questions = this.#getQuestions('view');
+        break;
+      case 'Add Data':
+        console.log('user wants to add data');
+        questions = this.#getQuestions('add');
+        break;
+      case 'Update Data':
+        console.log('user wants to update data');
+        questions = this.#getQuestions('update');
+        break;
+      case 'Delete Data':
+        console.log('user wants to delete data');
+        questions = this.#getQuestions('delete');
+        break;
+      default:
+        console.log('Selection Unaccounted For');
     }
 
+    userInput.push(await this.#interrogate(questions));
+    // Do stuff with returned data
+    // console.log(userInput);
 
 
-    return answers;
+
+
+
+
+    return userInput;
   }
 
   // NEED TO ADD VALIDATIONS TO QUESTIONS
