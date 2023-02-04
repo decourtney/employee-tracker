@@ -18,6 +18,7 @@
   "homepage": "https://github.com/decourtney/12-employee-tracker#readme",
   "dependencies": {
     "chalk": "^4.1.2",
+    "console-table-printer": "^2.11.1",
     "console.table": "^0.10.0",
     "dedent-js": "^1.0.1",
     "express": "^4.18.2",

@@ -8,14 +8,20 @@ var _Interrogator_instances, _Interrogator_getQuestions, _Interrogator_interroga
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 class Interrogator {
-    constructor() {
+    constructor(department, firstName, lastName, title) {
         _Interrogator_instances.add(this);
+        this.departmentName = department;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.title = title;
     }
-    async displayMainMenu() {
+    updateDBInfo() {
+    }
+    async beginInterrogation(val) {
         let userInput = [];
-        let questions = __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_getQuestions).call(this, 'main');
+        let questions = __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_getQuestions).call(this, val);
         userInput.push(await __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_interrogate).call(this, questions));
-        if (userInput[0].menuOptions === 'Exit') {
+        if (userInput[0].menuOptions === 'Exit' || userInput[0].error === false || userInput[0].isBuild != null) {
             console.log('Exiting Interrogator');
             return userInput;
         }
@@ -40,14 +46,30 @@ class Interrogator {
                 console.log('Selection Unaccounted For');
         }
         userInput.push(await __classPrivateFieldGet(this, _Interrogator_instances, "m", _Interrogator_interrogate).call(this, questions));
-        // Do stuff with returned data
-        // console.log(userInput);
         return userInput;
     }
 }
 _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _Interrogator_getQuestions(menu) {
     let questions;
     switch (menu) {
+        case 'refresh':
+            questions = [
+                {
+                    type: 'confirm',
+                    name: 'isBuild',
+                    message: 'Would you like to rebuild the database?',
+                    default: false
+                },
+                {
+                    type: 'confirm',
+                    name: 'isSeed',
+                    message: 'Would you also like to seed the database?',
+                    default: true,
+                    when: (answers) => { return answers.isBuild; }
+                }
+            ];
+            break;
+        // Extra space for readability
         case 'main':
             questions = [
                 {
@@ -64,13 +86,14 @@ _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _
                 }
             ];
             break;
+        // Extra space for readability
         case 'view':
             questions = [
                 {
                     type: 'list',
                     name: 'viewOptions',
                     message: 'What data would you like to see?:',
-                    choices: ['Departments', 'Roles', 'Employees'],
+                    choices: ['Department', 'Role', 'Employee'],
                 },
                 {
                     type: 'list',
@@ -101,6 +124,7 @@ _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _
                 }
             ];
             break;
+        // Extra space for readability
         case 'add':
             questions = [
                 {
@@ -178,6 +202,7 @@ _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _
                 }
             ];
             break;
+        // Extra space for readability
         case 'update':
             questions = [
                 {
@@ -212,6 +237,7 @@ _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _
                 }
             ];
             break;
+        // Extra space for readability
         case 'delete':
             questions = [
                 {
@@ -249,6 +275,7 @@ _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _
                 }
             ];
             break;
+        // Extra space for readability
         default:
             questions = [
                 {

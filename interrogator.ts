@@ -4,14 +4,27 @@ const cTable = require('console.table');
 
 class Interrogator
 {
-  async displayMainMenu()
+  constructor(department, firstName, lastName, title)
+  {
+    this.departmentName = department;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.title = title;
+  }
+
+  updateDBInfo()
+  {
+
+  }
+
+  async beginInterrogation(val)
   {
     let userInput = [];
 
-    let questions = this.#getQuestions('main');
+    let questions = this.#getQuestions(val);
 
     userInput.push(await this.#interrogate(questions));
-    if (userInput[0].menuOptions === 'Exit') { console.log('Exiting Interrogator'); return userInput }
+    if (userInput[0].menuOptions === 'Exit' || userInput[0].error === false || userInput[0].isBuild != null) { console.log('Exiting Interrogator'); return userInput }
 
     switch (userInput[0].menuOptions)
     {
@@ -36,13 +49,6 @@ class Interrogator
     }
 
     userInput.push(await this.#interrogate(questions));
-    // Do stuff with returned data
-    // console.log(userInput);
-
-
-
-
-
 
     return userInput;
   }
@@ -53,6 +59,25 @@ class Interrogator
     let questions;
     switch (menu)
     {
+      case 'refresh':
+        questions = [
+          {
+            type: 'confirm',
+            name: 'isBuild',
+            message: 'Would you like to rebuild the database?',
+            default: false
+          },
+          {
+            type: 'confirm',
+            name: 'isSeed',
+            message: 'Would you also like to seed the database?',
+            default: true,
+            when: (answers) => { return answers.isBuild }
+          }];
+        break;
+
+      // Extra space for readability
+
       case 'main':
         questions = [
           {
@@ -70,7 +95,7 @@ class Interrogator
           }];
         break;
 
-
+      // Extra space for readability
 
       case 'view':
         questions = [
@@ -78,7 +103,7 @@ class Interrogator
             type: 'list',
             name: 'viewOptions',
             message: 'What data would you like to see?:',
-            choices: ['Departments', 'Roles', 'Employees'],
+            choices: ['Department', 'Role', 'Employee'],
           },
           {
             type: 'list',
@@ -103,7 +128,7 @@ class Interrogator
           }];
         break;
 
-
+      // Extra space for readability
 
       case 'add':
         questions = [
@@ -166,7 +191,7 @@ class Interrogator
           }];
         break;
 
-
+      // Extra space for readability
 
       case 'update':
         questions = [
@@ -198,7 +223,7 @@ class Interrogator
           }];
         break;
 
-
+      // Extra space for readability
 
       case 'delete':
         questions = [
@@ -231,7 +256,7 @@ class Interrogator
           }];
         break;
 
-
+      // Extra space for readability
 
       default:
         questions = [
