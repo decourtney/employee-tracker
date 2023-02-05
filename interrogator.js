@@ -8,14 +8,30 @@ var _Interrogator_instances, _Interrogator_getQuestions, _Interrogator_interroga
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 class Interrogator {
-    constructor(department, firstName, lastName, title) {
+    constructor() {
         _Interrogator_instances.add(this);
-        this.departmentName = department;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.title = title;
+        this.departmentNames = [];
+        this.roles = [];
+        this.empNames = [];
+        this.managerNames = [];
     }
-    updateDBInfo() {
+    updateDBInfo(val) {
+        val[0].forEach(element => {
+            this.departmentNames.push(element.department_name);
+        });
+        val[1].forEach(element => {
+            this.roles.push(element.title);
+        });
+        val[2].forEach(element => {
+            this.empNames.push(element.first_name + ' ' + element.last_name);
+        });
+        val[3].forEach(element => {
+            this.managerNames.push(element.first_name + ' ' + element.last_name);
+        });
+        // console.log(this.departmentNames);
+        // console.log(this.roles);
+        // console.log(this.empNames);
+        // console.log(this.managerNames);
     }
     async beginInterrogation(val) {
         let userInput = [];
@@ -98,9 +114,9 @@ _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _
                 {
                     type: 'list',
                     name: 'viewEmpOptions',
-                    message: 'How would you like to list employees?:',
-                    choices: ['All', 'By Manager', 'By Department'],
-                    when: (answers) => { if (answers.viewOptions === 'Employees') {
+                    message: 'List the employees by:',
+                    choices: ['All', 'Department', 'Role', 'Manager'],
+                    when: (answers) => { if (answers.viewOptions === 'Employee') {
                         return true;
                     } }
                 },
@@ -108,17 +124,26 @@ _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _
                     type: 'list',
                     name: 'viewEmpByManager',
                     message: 'Which manager\'s employees would you like to see?:',
-                    choices: ['Names of Managers'],
-                    when: (answers) => { if (answers.viewEmpOptions === 'By Manager') {
+                    choices: this.managerNames,
+                    when: (answers) => { if (answers.viewEmpOptions === 'Manager') {
                         return true;
                     } }
                 },
                 {
                     type: 'list',
                     name: 'viewEmpByDepartment',
-                    message: 'Which departments employees would you like to see?:',
-                    choices: ['Names of Departments'],
-                    when: (answers) => { if (answers.viewEmpOptions === 'By Department') {
+                    message: 'Which department\'s employees would you like to see?:',
+                    choices: this.departmentNames,
+                    when: (answers) => { if (answers.viewEmpOptions === 'Department') {
+                        return true;
+                    } }
+                },
+                {
+                    type: 'list',
+                    name: 'viewEmpByRole',
+                    message: 'Which role\'s employees would you like to see?:',
+                    choices: this.roles,
+                    when: (answers) => { if (answers.viewEmpOptions === 'Role') {
                         return true;
                     } }
                 }
@@ -161,7 +186,7 @@ _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _
                     type: 'list',
                     name: 'roleDept',
                     message: 'Enter the department this role belongs to:',
-                    choices: ['Engineering', 'Finance', 'Legal', 'Sales', 'Service'],
+                    choices: this.departmentNames,
                     when: (answers) => { if (answers.addOptions === 'Role') {
                         return true;
                     } }
@@ -169,7 +194,7 @@ _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _
                 {
                     type: 'input',
                     name: 'empFname',
-                    message: 'Enter the employee first name:',
+                    message: 'Enter the employee\'s first name:',
                     when: (answers) => { if (answers.addOptions === 'Employee') {
                         return true;
                     } }
@@ -177,7 +202,7 @@ _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _
                 {
                     type: 'input',
                     name: 'empLname',
-                    message: 'Enter the employee last name:',
+                    message: 'Enter the employee\'s last name:',
                     when: (answers) => { if (answers.addOptions === 'Employee') {
                         return true;
                     } }
@@ -185,8 +210,8 @@ _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _
                 {
                     type: 'list',
                     name: 'empRole',
-                    message: 'Enter the employee role:',
-                    choices: ['Sales Lead', 'Salesperson', 'Lead Engineer', 'Software Engineer', 'Account Manager', 'Accountatn', 'Legal Team Lead', 'Lawyer'],
+                    message: 'Enter the employee\'s role:',
+                    choices: this.roles,
                     when: (answers) => { if (answers.addOptions === 'Employee') {
                         return true;
                     } }
@@ -194,8 +219,8 @@ _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _
                 {
                     type: 'list',
                     name: 'empManager',
-                    message: 'Enter the employee manager:',
-                    choices: ['None', 'John Doe', 'Mike Chan', 'Ashley Rodriguez', 'Kevin Tupik', 'Kunal Singh', 'Malia Brown'],
+                    message: 'Enter the employee\'s manager:',
+                    choices: this.empNames,
                     when: (answers) => { if (answers.addOptions === 'Employee') {
                         return true;
                     } }
@@ -209,29 +234,29 @@ _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _
                     type: 'list',
                     name: 'updateOptions',
                     message: 'What would you like to update?:',
-                    choices: ['Employee Role', 'Employee Manager'],
+                    choices: ['Employee\'s Role', 'Employee\'s Manager'],
                 },
                 {
                     type: 'list',
                     name: 'updateEmp',
                     message: 'Which employee do you want to update?:',
-                    choices: ['Name of Employees'],
+                    choices: this.empNames,
                 },
                 {
                     type: 'list',
                     name: 'updateEmpRole',
-                    message: 'What role do you want to assign the employee?:',
-                    choices: ['Sales Lead', 'Sales Person'],
-                    when: (answers) => { if (answers.updateOptions === 'Employee Role') {
+                    message: 'What role do you want to assign to this employee?:',
+                    choices: this.roles,
+                    when: (answers) => { if (answers.updateOptions === 'Employee\'s Role') {
                         return true;
                     } }
                 },
                 {
                     type: 'list',
                     name: 'updateEmpManager',
-                    message: 'What manager do you want to assign the employee?:',
-                    choices: ['Names of Managers'],
-                    when: (answers) => { if (answers.updateOptions === 'Employee Manager') {
+                    message: 'What manager do you want to assign the employee to?:',
+                    choices: this.empNames,
+                    when: (answers) => { if (answers.updateOptions === 'Employee\'s Manager') {
                         return true;
                     } }
                 }
@@ -250,7 +275,7 @@ _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _
                     type: 'list',
                     name: 'deleteDept',
                     message: 'Which department would you like to delete?:',
-                    choices: ['Sales', 'Engineering', 'Finance', 'Legal'],
+                    choices: this.departmentNames,
                     when: (answers) => { if (answers.deleteOptions === 'Department') {
                         return true;
                     } }
@@ -259,7 +284,7 @@ _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _
                     type: 'list',
                     name: 'deleteRole',
                     message: 'Which role would you like to delete?:',
-                    choices: ['Sales Lead', 'Salesperson', 'Lead Engineer'],
+                    choices: this.roles,
                     when: (answers) => { if (answers.deleteOptions === 'Role') {
                         return true;
                     } }
@@ -268,7 +293,7 @@ _Interrogator_instances = new WeakSet(), _Interrogator_getQuestions = function _
                     type: 'list',
                     name: 'deleteEmp',
                     message: 'Which employee would you like to delete?:',
-                    choices: ['Names of Employees'],
+                    choices: this.empNames,
                     when: (answers) => { if (answers.deleteOptions === 'Employee') {
                         return true;
                     } }

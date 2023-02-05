@@ -15,6 +15,12 @@ const interrogator = new Interrogator();
 // Read in the .sql files, convert to string and split by ';' = returns an array of commands and ';' is removed
 const schemaSql = fs.readFileSync('./schema.sql').toString().split(';');
 const seedSql = fs.readFileSync('./seeds.sql').toString().split(';');
+const updateQuery = [
+    'SELECT department_name FROM department',
+    'SELECT title FROM role',
+    'SELECT first_name, last_name FROM employee',
+    'SELECT distinct e1.first_name, e1.last_name FROM employee e1 INNER JOIN employee e2 ON e1.id = e2.manager_id'
+];
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 async function init() {
@@ -47,25 +53,31 @@ async function init() {
     }
     // If the database wasn't rebuilt then we need to utilize the existing.
     await db.query('use workforce_db');
-    // Create Interrogator instance with current DB info
-    let updateStuff = (await db.query('select first_name, last_name from employee'));
-    console.log((updateStuff));
-    // while (true)
-    // {
-    //   let answers = await interrogator.beginInterrogation('main');
-    //   if (answers[0].menuOptions === 'Exit') break;
-    //   // console.log(sqlQueries.buildQuery(answers));
-    //   let qBuilderResponses = sqlQueries.buildQuery(answers);
-    //   let [queryResponse] = await db.query(qBuilderResponses[0]);
-    //   console.log(queryResponse);
-    //   console.table(queryResponse);
-    //   // printTable(queryResponse);
-    //   if (qBuilderResponses[1] === true)
-    //   {
-    //     // update interrogator with db info
-    //   }
-    // }
+    // Update Interrogator instance with initial DB info
+    await updateInterrogator(db);
+    while (true) {
+        let answers = await interrogator.beginInterrogation('main');
+        if (answers[0].menuOptions === 'Exit')
+            break;
+        let qBuilderResponses = sqlQueries.buildQuery(answers);
+        let [queryResponse] = await db.query(qBuilderResponses.query);
+        if (qBuilderResponses.isUpdate) {
+            console.log(qBuilderResponses.message);
+            // update interrogator with db info
+            updateInterrogator(db);
+        }
+        else {
+            printTable(queryResponse);
+        }
+    }
     // Close connection to database
     db.end();
+}
+async function updateInterrogator(db) {
+    let currentDBInfo = [];
+    for (let q of updateQuery) {
+        currentDBInfo.push((await db.query(q))[0]);
+    }
+    interrogator.updateDBInfo(currentDBInfo);
 }
 init();
