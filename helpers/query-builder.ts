@@ -1,8 +1,12 @@
-class SQLQueries
+class QueryBuilder
 {
   buildQuery(val)
   {
     let query;
+
+    console.log(val)
+    // First index has the action type
+    // Second index has the gathered info
     switch (val[0].menuOptions)
     {
       case 'View Data':
@@ -22,7 +26,7 @@ class SQLQueries
     return query;
   }
 
-  createViewQuery(val)
+  private createViewQuery(val)
   {
     let q;
 
@@ -31,9 +35,9 @@ class SQLQueries
       case 'Employee':
         switch (val.viewEmpOptions)
         {
-          case 'All':
+          case 'All':           
             q = {
-              query: `SELECT e1.id AS ID, 
+              command: `SELECT e1.id AS ID, 
                         CONCAT (e1.first_name, ' ', e1.last_name) AS Name, 
                         role.title AS Title, department.department_name AS Department, 
                         role.salary AS Salary, 
@@ -49,7 +53,7 @@ class SQLQueries
 
           case 'Department':
             q = {
-              query: `SELECT e1.id AS ID, 
+              command: `SELECT e1.id AS ID, 
                         CONCAT (e1.first_name, ' ', e1.last_name) AS Name, 
                         role.title AS Title, department.department_name AS Department, 
                         role.salary AS Salary, 
@@ -66,7 +70,7 @@ class SQLQueries
 
           case 'Role':
             q = {
-              query: `SELECT e1.id AS ID, 
+              command: `SELECT e1.id AS ID, 
                         CONCAT (e1.first_name, ' ', e1.last_name) AS Name, 
                         role.title AS Title, department.department_name AS Department, 
                         role.salary AS Salary, 
@@ -83,7 +87,7 @@ class SQLQueries
 
           case 'Manager':
             q = {
-              query: `SELECT e1.id AS ID, 
+              command: `SELECT e1.id AS ID, 
                         CONCAT (e1.first_name, ' ', e1.last_name) AS Name, 
                         role.title AS Title, department.department_name AS Department, 
                         role.salary AS Salary, 
@@ -102,7 +106,7 @@ class SQLQueries
 
       case 'Role':
         q = {
-          query: `SELECT role.id AS ID, role.title AS Title, department.department_name AS Department, role.salary AS Salary
+          command: `SELECT role.id AS ID, role.title AS Title, department.department_name AS Department, role.salary AS Salary
                   FROM role
                   LEFT JOIN department ON department.id = role.department_id
                   ORDER BY role.id`,
@@ -112,7 +116,7 @@ class SQLQueries
 
       case 'Department':
         q = {
-          query: `SELECT department.id AS ID, department_name AS Department
+          command: `SELECT department.id AS ID, department_name AS Department
                   FROM department
                   ORDER BY department.id`,
           isUpdate: false
@@ -123,7 +127,7 @@ class SQLQueries
     return q;
   }
 
-  createAddQuery(val)
+  private createAddQuery(val)
   {
     let q;
 
@@ -131,14 +135,15 @@ class SQLQueries
     {
       case 'Department':
         q = {
-          query: `INSERT INTO department (department_name) VALUES ('${ val.deptName }')`,
+          command: `INSERT INTO department (department_name) VALUES ('${ val.deptName }')`,
           isUpdate: true,
           message: `Added the ${ val.deptName } department to the database.`
         };
         break;
+
       case 'Role':
         q = {
-          query: `INSERT INTO role (title, salary, department_id)
+          command: `INSERT INTO role (title, salary, department_id)
                   SELECT '${ val.roleName }', '${ val.roleSalary }', department.id
                   FROM department
                   WHERE department_name = '${ val.roleDept }'`,
@@ -149,7 +154,7 @@ class SQLQueries
 
       case 'Employee':
         q = {
-          query: `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+          command: `INSERT INTO employee (first_name, last_name, role_id, manager_id)
                   SELECT '${ val.empFname }', '${ val.empLname }', role.id, e.id
                   FROM employee AS e
                   LEFT JOIN role ON role.title = '${ val.empRole }'
@@ -163,7 +168,7 @@ class SQLQueries
     return q;
   }
 
-  createUpdateQuery(val)
+  private createUpdateQuery(val)
   {
     let q;
 
@@ -171,7 +176,7 @@ class SQLQueries
     {
       case 'Employee\'s Role':
         q = {
-          query: `UPDATE employee
+          command: `UPDATE employee
                   LEFT JOIN role AS r ON r.title = '${ val.updateEmpRole }'
                   SET employee.role_id = r.id
                   WHERE CONCAT (employee.first_name, ' ', employee.last_name) = '${ val.updateEmp }'`,
@@ -179,9 +184,10 @@ class SQLQueries
           message: `Reassigned ${ val.updateEmp } as a ${ val.updateEmpRole }.`
         };
         break;
+
       case 'Employee\'s Manager':
         q = {
-          query: `UPDATE employee
+          command: `UPDATE employee
                   LEFT JOIN employee AS e2 ON CONCAT (e2.first_name, ' ', e2.last_name) = '${ val.updateEmpManager }'
                   SET employee.manager_id = e2.id
                   WHERE CONCAT (employee.first_name, ' ', employee.last_name) = '${ val.updateEmp }'`,
@@ -194,7 +200,7 @@ class SQLQueries
     return q;
   }
 
-  createDeleteQuery(val)
+  private createDeleteQuery(val)
   {
     let q;
 
@@ -202,23 +208,25 @@ class SQLQueries
     {
       case 'Department':
         q = {
-          query: `DELETE FROM department
+          command: `DELETE FROM department
                   WHERE department_name = '${ val.deleteDept }'`,
           isUpdate: true,
           message: `${ val.deleteDept } has been removed from the database.`
         }
         break;
+
       case 'Role':
         q = {
-          query: `DELETE FROM role
+          command: `DELETE FROM role
                   WHERE role.title = '${ val.deleteRole }'`,
           isUpdate: true,
           message: `${ val.deleteRole } has been removed from the database.`
         }
         break;
+
       case 'Employee':
         q = {
-          query: `DELETE FROM employee
+          command: `DELETE FROM employee
                   WHERE CONCAT (employee.first_name, ' ', employee.last_name) = '${ val.deleteEmp }'`,
           isUpdate: true,
           message: `${ val.deleteEmp } has been removed from the database.`
@@ -229,4 +237,5 @@ class SQLQueries
     return q;
   }
 }
-module.exports = SQLQueries;
+
+module.exports = QueryBuilder;

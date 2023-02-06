@@ -1,30 +1,44 @@
 "use strict";
-const Interrogator = require('./interrogator');
-const Titler = require('./titler');
-const mysql = require('mysql2/promise');
-const SQLQueries = require('./sql-queries');
 const express = require('express');
+const Interrogator = require('./public/scripts/interrogator');
+const Titler = require('./helpers/titler');
+const QueryBuilder = require('./helpers/query-builder');
+const mysql = require('mysql2/promise');
 const fs = require('fs');
 const { printTable } = require('console-table-printer');
-const cTable = require('console.table');
-const PORT = process.env.PORT || 3306;
+const chalk = require('chalk');
+const { clog } = require('./middleware/clog');
+const api = require('./routes/index');
+const path = require('path');
+const PORT = process.env.PORT || 3001;
 const app = express();
 const titler = new Titler();
-const sqlQueries = new SQLQueries();
+const queryBuilder = new QueryBuilder();
 const interrogator = new Interrogator();
 // Read in the .sql files, convert to string and split by ';' = returns an array of commands and ';' is removed
-const schemaSql = fs.readFileSync('./schema.sql').toString().split(';');
-const seedSql = fs.readFileSync('./seeds.sql').toString().split(';');
+const schemaSql = fs.readFileSync('./db/schema.sql').toString().split(';');
+const seedSql = fs.readFileSync('./db/seeds.sql').toString().split(';');
+// Queries for updating Interrogator
 const updateQuery = [
     'SELECT department_name FROM department',
     'SELECT title FROM role',
     'SELECT first_name, last_name FROM employee',
     'SELECT distinct e1.first_name, e1.last_name FROM employee e1 INNER JOIN employee e2 ON e1.id = e2.manager_id'
 ];
-app.use(express.urlencoded({ extended: false }));
+// Simple logging middleware
+app.use(clog);
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use('/api', api);
+app.use(express.static('public'));
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '/public/index.html'));
+});
+app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public/pages/404.html')));
+app.listen(PORT, () => console.log(`App listening at http://localhost:${PORT} 🚀`));
+// Begin main
 async function init() {
-    titler.displayTitle('main');
+    // Initialize mysql
     const db = await mysql.createConnection({
         host: 'localhost',
         user: 'root',
@@ -55,26 +69,39 @@ async function init() {
     await db.query('use workforce_db');
     // Update Interrogator instance with initial DB info
     await updateInterrogator(db);
+    // Display Main Title
+    titler.displayTitle('main');
+    // Loop prompting questions, building queries, querying database, and displaying results
     while (true) {
+        // Load main menu. If user selects exit then break out of loop
         let answers = await interrogator.beginInterrogation('main');
         if (answers[0].menuOptions === 'Exit')
             break;
-        let qBuilderResponses = sqlQueries.buildQuery(answers);
-        let [queryResponse] = await db.query(qBuilderResponses.query);
+        // Build query from answer
+        let qBuilderResponses = queryBuilder.buildQuery(answers);
+        // Query database
+        let [queryResponse] = await db.query(qBuilderResponses.command);
+        // DB Accessed Title
+        // titler.displayTitle('accessed');
+        // If the database was modified (CrUD)
         if (qBuilderResponses.isUpdate) {
-            console.log(qBuilderResponses.message);
-            // update interrogator with db info
+            // Display message from built query
+            console.log(chalk.yellowBright('\t' + qBuilderResponses.message + '\n'));
+            // Update Interrogator (so choices match database)
             updateInterrogator(db);
         }
         else {
+            // Display requested db info
             printTable(queryResponse);
         }
     }
+    titler.displayTitle('exit');
     // Close connection to database
     db.end();
 }
 async function updateInterrogator(db) {
     let currentDBInfo = [];
+    // Iterate through updateQuery and perform db queries then pass results to Interrogator
     for (let q of updateQuery) {
         currentDBInfo.push((await db.query(q))[0]);
     }

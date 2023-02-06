@@ -1,6 +1,5 @@
 const inquirer = require('inquirer');
-const cTable = require('console.table');
-
+const chalk = require('chalk');
 
 class Interrogator
 {
@@ -11,7 +10,7 @@ class Interrogator
 
   updateDBInfo(val)
   {
-    // console.log(val);
+    // Index: 0 = List of Department names, 1 = List of Role names, 2 = List of Employees, 3 = List of Managers
     val[0].forEach(element =>
     {
       this.departmentNames.push(element.department_name);
@@ -23,60 +22,60 @@ class Interrogator
     val[2].forEach(element =>
     {
       this.empNames.push(element.first_name + ' ' + element.last_name);
-    })
+    });
     val[3].forEach(element =>
     {
       this.managerNames.push(element.first_name + ' ' + element.last_name);
-    })
-
-    // console.log(this.departmentNames);
-    // console.log(this.roles);
-    // console.log(this.empNames);
-    // console.log(this.managerNames);
+    });
   }
 
-  async beginInterrogation(val)
+  async beginInterrogation(val: string)
   {
     let userInput = [];
 
-    let questions = this.#getQuestions(val);
+    // This will be either Refresh DB prompt or the Main Menu questions
+    let questions = this.getQuestions(val);
 
-    userInput.push(await this.#interrogate(questions));
-    if (userInput[0].menuOptions === 'Exit' || userInput[0].error === false || userInput[0].isBuild != null) { console.log('Exiting Interrogator'); return userInput }
+    // Check response for Exit, Rebuild database, or the default error catch
+    userInput.push(await this.interrogate(questions));
+    if (userInput[0].isBuild != null || userInput[0].menuOptions === 'Exit' || userInput[0].error === false) { console.log('Exiting Interrogator'); return userInput }
 
+    // Get the group of questions based on Main Menu selection
     switch (userInput[0].menuOptions)
     {
       case 'View Data':
-        console.log('user wants to view data');
-        questions = this.#getQuestions('view');
+        // console.log('user wants to view data');
+        questions = this.getQuestions('view');
         break;
       case 'Add Data':
-        console.log('user wants to add data');
-        questions = this.#getQuestions('add');
+        // console.log('user wants to add data');
+        questions = this.getQuestions('add');
         break;
       case 'Update Data':
-        console.log('user wants to update data');
-        questions = this.#getQuestions('update');
+        // console.log('user wants to update data');
+        questions = this.getQuestions('update');
         break;
       case 'Delete Data':
-        console.log('user wants to delete data');
-        questions = this.#getQuestions('delete');
+        // console.log('user wants to delete data');
+        questions = this.getQuestions('delete');
         break;
       default:
         console.log('Selection Unaccounted For');
     }
 
-    userInput.push(await this.#interrogate(questions));
+    // Prompt questions
+    userInput.push(await this.interrogate(questions));
 
+    // Return collected user input
     return userInput;
   }
 
-  // NEED TO ADD VALIDATIONS TO QUESTIONS
-  #getQuestions(menu)
+  private getQuestions(menu: string)
   {
     let questions;
     switch (menu)
     {
+      // Rebuild database questions
       case 'refresh':
         questions = [
           {
@@ -94,8 +93,7 @@ class Interrogator
           }];
         break;
 
-      // Extra space for readability
-
+      // Main Menu questions
       case 'main':
         questions = [
           {
@@ -113,8 +111,7 @@ class Interrogator
           }];
         break;
 
-      // Extra space for readability
-
+      // View Database Info questions
       case 'view':
         questions = [
           {
@@ -153,8 +150,7 @@ class Interrogator
           }];
         break;
 
-      // Extra space for readability
-
+      // Insert Into Database questions
       case 'add':
         questions = [
           {
@@ -167,19 +163,22 @@ class Interrogator
             type: 'input',
             name: 'deptName',
             message: `Enter the department name:`,
-            when: (answers) => { if (answers.addOptions === 'Department') { return true } }
+            when: (answers) => { if (answers.addOptions === 'Department') { return true } },
+            validate: this.validateIsName
           },
           {
             type: 'input',
             name: 'roleName',
             message: 'Enter the role name:',
-            when: (answers) => { if (answers.addOptions === 'Role') { return true } }
+            when: (answers) => { if (answers.addOptions === 'Role') { return true } },
+            validate: this.validateIsName
           },
           {
             type: 'input',
             name: 'roleSalary',
             message: 'Enter the role salary:',
-            when: (answers) => { if (answers.addOptions === 'Role') { return true } }
+            when: (answers) => { if (answers.addOptions === 'Role') { return true } },
+            validate: this.validateIsID
           },
           {
             type: 'list',
@@ -192,13 +191,15 @@ class Interrogator
             type: 'input',
             name: 'empFname',
             message: 'Enter the employee\'s first name:',
-            when: (answers) => { if (answers.addOptions === 'Employee') { return true } }
+            when: (answers) => { if (answers.addOptions === 'Employee') { return true } },
+            validate: this.validateIsName
           },
           {
             type: 'input',
             name: 'empLname',
             message: 'Enter the employee\'s last name:',
-            when: (answers) => { if (answers.addOptions === 'Employee') { return true } }
+            when: (answers) => { if (answers.addOptions === 'Employee') { return true } },
+            validate: this.validateIsName
           },
           {
             type: 'list',
@@ -216,8 +217,7 @@ class Interrogator
           }];
         break;
 
-      // Extra space for readability
-
+      // Update Database questions
       case 'update':
         questions = [
           {
@@ -248,8 +248,7 @@ class Interrogator
           }];
         break;
 
-      // Extra space for readability
-
+      // Delete Info from Database questions
       case 'delete':
         questions = [
           {
@@ -281,8 +280,7 @@ class Interrogator
           }];
         break;
 
-      // Extra space for readability
-
+      // Default Error-catch
       default:
         questions = [
           {
@@ -296,8 +294,29 @@ class Interrogator
     return questions;
   }
 
+  private validateIsName(val)
+  {
+    // Checks for just about any variation of an english character name
+    if (!/^[a-z ,.'-]+$/i.test(val))
+    {
+      return chalk.redBright('Please enter a valid name.');
+    }
 
-  #interrogate(questions)
+    return true;
+  }
+
+  private validateIsID(val)
+  {
+    // Checks for 12 digit number including up to 2 decimal places
+    if (!/^((?!0)\d{1,10}|0|\.\d{1,2})($|\.$|\.\d{1,2}$)/.test(val))
+    {
+      return chalk.redBright('Please enter a valid salary.');
+    }
+
+    return true;
+  }
+
+  private interrogate(questions)
   {
     return new Promise((resolve, reject) =>
     {
