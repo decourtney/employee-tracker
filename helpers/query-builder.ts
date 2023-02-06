@@ -32,6 +32,25 @@ class QueryBuilder
 
     switch (val.viewOptions)
     {
+      case 'Department':
+        q = {
+          command: `SELECT department.id AS ID, department_name AS Department
+                  FROM department
+                  ORDER BY department.id`,
+          isUpdate: false
+        };
+        break;
+
+      case 'Role':
+        q = {
+          command: `SELECT role.id AS ID, role.title AS Title, department.department_name AS Department, role.salary AS Salary
+                  FROM role
+                  LEFT JOIN department ON department.id = role.department_id
+                  ORDER BY role.id`,
+          isUpdate: false
+        };
+        break;
+
       case 'Employee':
         switch (val.viewEmpOptions)
         {
@@ -102,25 +121,6 @@ class QueryBuilder
             };
             break;
         }
-        break;
-
-      case 'Role':
-        q = {
-          command: `SELECT role.id AS ID, role.title AS Title, department.department_name AS Department, role.salary AS Salary
-                  FROM role
-                  LEFT JOIN department ON department.id = role.department_id
-                  ORDER BY role.id`,
-          isUpdate: false
-        };
-        break;
-
-      case 'Department':
-        q = {
-          command: `SELECT department.id AS ID, department_name AS Department
-                  FROM department
-                  ORDER BY department.id`,
-          isUpdate: false
-        };
         break;
     }
 
