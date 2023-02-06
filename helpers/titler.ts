@@ -1,9 +1,11 @@
 const chalk = require('chalk');
+const delay = 700;
 
 class Titler
 {
-  displayTitle(val)
+  async displayTitle(val)
   {
+    await this.sleep()
     switch (val)
     {
       case 'main':
@@ -89,6 +91,12 @@ class Titler
 |                                                                                                          |`);
     console.log(chalk.whiteBright('+' + '-'.repeat(106) + '+'));
   }
+
+  private sleep()
+{
+  console.log(chalk.yellowBright('\nProcessing. Please Wait...'));
+  return new Promise(resolve => setTimeout(resolve, delay));
+}
 
 }
 

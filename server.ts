@@ -27,7 +27,7 @@ const updateQuery = [
   'SELECT department_name FROM department',
   'SELECT title FROM role',
   'SELECT first_name, last_name FROM employee',
-  'SELECT distinct e1.first_name, e1.last_name FROM employee e1 INNER JOIN employee e2 ON e1.id = e2.manager_id']
+  'SELECT distinct e1.first_name, e1.last_name FROM employee e1 INNER JOIN employee e2 ON e1.id = e2.manager_id'];
 
 
 // Simple logging middleware
@@ -51,8 +51,6 @@ app.get('*', (req, res) =>
 app.listen(PORT, () =>
   console.log(`App listening at http://localhost:${ PORT } 🚀`)
 );
-
-
 
 // Begin main
 async function init()
@@ -99,7 +97,7 @@ async function init()
   await updateInterrogator(db);
 
   // Display Main Title
-  titler.displayTitle('main');
+  await titler.displayTitle('main');
 
   // Loop prompting questions, building queries, querying database, and displaying results
   while (true)
@@ -114,7 +112,7 @@ async function init()
     let [queryResponse] = await db.query(qBuilderResponses.command);
 
     // DB Accessed Title
-    // titler.displayTitle('accessed');
+    await titler.displayTitle('accessed');
 
     // If the database was modified (CrUD)
     if (qBuilderResponses.isUpdate)
@@ -132,7 +130,7 @@ async function init()
     }
   }
 
-  titler.displayTitle('exit');
+  await titler.displayTitle('exit');
   // Close connection to database
   db.end();
 }

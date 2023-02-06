@@ -1,5 +1,6 @@
 "use strict";
 const chalk = require('chalk');
+const delay = 700;
 class Titler {
     constructor() {
         this.mainTitle = () => {
@@ -66,7 +67,8 @@ class Titler {
             console.log(chalk.whiteBright('+' + '-'.repeat(106) + '+'));
         };
     }
-    displayTitle(val) {
+    async displayTitle(val) {
+        await this.sleep();
         switch (val) {
             case 'main':
                 this.mainTitle();
@@ -80,6 +82,10 @@ class Titler {
             default:
                 console.log('MISSING TITLE');
         }
+    }
+    sleep() {
+        console.log(chalk.yellowBright('\nProcessing. Please Wait...'));
+        return new Promise(resolve => setTimeout(resolve, delay));
     }
 }
 module.exports = Titler;
