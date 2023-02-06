@@ -107,3 +107,4 @@ async function updateInterrogator(db) {
     }
     interrogator.updateDBInfo(currentDBInfo);
 }
+init();
