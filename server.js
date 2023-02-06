@@ -70,7 +70,7 @@ async function init() {
     // Update Interrogator instance with initial DB info
     await updateInterrogator(db);
     // Display Main Title
-    titler.displayTitle('main');
+    await titler.displayTitle('main');
     // Loop prompting questions, building queries, querying database, and displaying results
     while (true) {
         // Load main menu. If user selects exit then break out of loop
@@ -82,7 +82,7 @@ async function init() {
         // Query database
         let [queryResponse] = await db.query(qBuilderResponses.command);
         // DB Accessed Title
-        // titler.displayTitle('accessed');
+        await titler.displayTitle('accessed');
         // If the database was modified (CrUD)
         if (qBuilderResponses.isUpdate) {
             // Display message from built query
@@ -95,7 +95,7 @@ async function init() {
             printTable(queryResponse);
         }
     }
-    titler.displayTitle('exit');
+    await titler.displayTitle('exit');
     // Close connection to database
     db.end();
 }

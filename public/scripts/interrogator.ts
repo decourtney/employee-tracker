@@ -60,7 +60,7 @@ class Interrogator
         questions = this.getQuestions('delete');
         break;
       default:
-        console.log('Selection Unaccounted For');
+        console.log(chalk.redBright('Selection Unaccounted For'));
     }
 
     // Prompt questions
