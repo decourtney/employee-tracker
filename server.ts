@@ -52,6 +52,7 @@ app.listen(PORT, () =>
   console.log(`App listening at http://localhost:${ PORT } 🚀`)
 );
 
+
 // Begin main
 async function init()
 {
@@ -59,14 +60,14 @@ async function init()
   const db = await mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'password',
+    password: 'password'
   });
 
   // Ask if the user wants to rebuild the database (DROP, CREATE)
   // And if so, reseed the database?
   const isRebuildDatabase = await interrogator.beginInterrogation('refresh');
 
-  // If user selected to rebuild database  
+  // If user selected to rebuild database or the database doesn't exist
   if (isRebuildDatabase[0].isBuild)
   {
     schemaSql.forEach(async element =>
@@ -131,7 +132,7 @@ async function init()
   }
 
   await titler.displayTitle('exit');
-  // Close connection to database
+  // Close command-line connection to database
   db.end();
 }
 

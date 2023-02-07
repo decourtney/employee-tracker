@@ -2,7 +2,6 @@
 class QueryBuilder {
     buildQuery(val) {
         let query;
-        console.log(val);
         // First index has the action type
         // Second index has the gathered info
         switch (val[0].menuOptions) {

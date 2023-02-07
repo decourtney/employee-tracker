@@ -1,3 +1,5 @@
+// This is a large collection of routes for specific DB queries
+
 const query = require('express').Router();
 const QueryBuilder = require('../helpers/query-builder');
 const mysql = require('mysql2');
@@ -56,7 +58,6 @@ query.post('/role/create', ({ body }, res) =>
 query.post('/employee/create', ({ body }, res) =>
 {
   const params = body;
-  console.log(params);
   const sql = queryBuilder.buildQuery([
     { menuOptions: 'Add Data' },
     {
@@ -99,7 +100,6 @@ query.get('/employee', (req, res) =>
 query.get('/employee/department', ({body}, res) =>
 {
   const params = body
-  console.log(params);
   const sql = queryBuilder.buildQuery([
     { menuOptions: 'View Data' },
     {
@@ -120,7 +120,6 @@ query.get('/employee/department', ({body}, res) =>
 query.get('/employee/role', ({body}, res) =>
 {
   const params = body
-  console.log(params);
   const sql = queryBuilder.buildQuery([
     { menuOptions: 'View Data' },
     {
@@ -141,7 +140,6 @@ query.get('/employee/role', ({body}, res) =>
 query.get('/employee/manager', ({body}, res) =>
 {
   const params = body
-  console.log(params);
   const sql = queryBuilder.buildQuery([
     { menuOptions: 'View Data' },
     {
@@ -162,7 +160,6 @@ query.get('/employee/manager', ({body}, res) =>
 query.get('/role', (req, res) =>
 {
   const params = req.params
-  console.log(params);
   const sql = queryBuilder.buildQuery([
     { menuOptions: 'View Data' },
     { viewOptions: 'Role' }]).command;
@@ -179,7 +176,6 @@ query.get('/role', (req, res) =>
 query.get('/department', (req, res) =>
 {
   const params = req.params
-  console.log(params);
   const sql = queryBuilder.buildQuery([{ menuOptions: 'View Data' }, { viewOptions: 'Department' }]).command;
 
   db.promise().query(sql).then(([rows, fields]) =>
@@ -196,7 +192,6 @@ query.get('/department', (req, res) =>
 query.put('/employee/role', ({ body }, res) =>
 {
   const params = body
-  console.log(params);
   const sql = queryBuilder.buildQuery([
     { menuOptions: 'Update Data' },
     {
@@ -217,7 +212,6 @@ query.put('/employee/role', ({ body }, res) =>
 query.put('/employee/manager', ({ body }, res) =>
 {
   const params = body
-  console.log(params);
   const sql = queryBuilder.buildQuery([
     { menuOptions: 'Update Data' },
     {
@@ -240,7 +234,6 @@ query.put('/employee/manager', ({ body }, res) =>
 query.delete('/department', ({ body }, res) =>
 {
   const params = body
-  console.log(params);
   const sql = queryBuilder.buildQuery([
     { menuOptions: 'Delete Data' },
     {
@@ -260,7 +253,6 @@ query.delete('/department', ({ body }, res) =>
 query.delete('/role', ({ body }, res) =>
 {
   const params = body
-  console.log(params);
   const sql = queryBuilder.buildQuery([
     { menuOptions: 'Delete Data' },
     {
@@ -280,7 +272,6 @@ query.delete('/role', ({ body }, res) =>
 query.delete('/employee', ({ body }, res) =>
 {
   const params = body
-  console.log(params);
   const sql = queryBuilder.buildQuery([
     { menuOptions: 'Delete Data' },
     {
