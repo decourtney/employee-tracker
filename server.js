@@ -47,8 +47,9 @@ async function init() {
     // Ask if the user wants to rebuild the database (DROP, CREATE)
     // And if so, reseed the database?
     const isRebuildDatabase = await interrogator.beginInterrogation('refresh');
-    // If user selected to rebuild database  
-    if (isRebuildDatabase[0].isBuild) {
+    const isDB = await db.query(`select schema_name from information_schema.schemata where schema_name = 'workforce_db';`);
+    // If user selected to rebuild database or teh database doesn't exist
+    if (isRebuildDatabase[0].isBuild || !isDB[0][0]) {
         schemaSql.forEach(async (element) => {
             // Make sure the element isnt an empty string (Any space between commands or trailing white space)
             if (element.trim())

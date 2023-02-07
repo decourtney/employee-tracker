@@ -29,8 +29,7 @@ class Interrogator {
         let questions = this.getQuestions(val);
         // Check response for Exit, Rebuild database, or the default error catch
         userInput.push(await this.interrogate(questions));
-        if (userInput[0].isBuild != null || userInput[0].menuOptions === 'Exit' || userInput[0].error === false) {
-            console.log('Exiting Interrogator');
+        if (userInput[0].menuOptions === 'Exit' || userInput[0].isBuild != null || userInput[0].error === false) {
             return userInput;
         }
         // Get the group of questions based on Main Menu selection
