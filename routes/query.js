@@ -10,8 +10,6 @@ const db = mysql.createConnection({
     password: 'password',
     database: 'workforce_db'
 });
-
-
 // Create
 query.post('/department/create', ({ body }, res) => {
     const params = body;
@@ -240,5 +238,4 @@ query.delete('/employee', ({ body }, res) => {
         });
     }).catch(console.log);
 });
-
 module.exports = query;

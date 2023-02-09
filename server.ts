@@ -126,8 +126,15 @@ async function init()
     }
     else
     {
-      // Display requested db info
-      printTable(queryResponse);
+      if (queryResponse[0] == null)
+      {
+        console.log(chalk.redBright('\t\nNO RECORDS FOUND\n'));
+      }
+      else
+      {
+        // Display requested db info
+        printTable(queryResponse);
+      }
     }
   }
 

@@ -42,14 +42,13 @@ async function init() {
     const db = await mysql.createConnection({
         host: 'localhost',
         user: 'root',
-        password: 'password',
+        password: 'password'
     });
     // Ask if the user wants to rebuild the database (DROP, CREATE)
     // And if so, reseed the database?
     const isRebuildDatabase = await interrogator.beginInterrogation('refresh');
-    const isDB = await db.query(`select schema_name from information_schema.schemata where schema_name = 'workforce_db';`);
-    // If user selected to rebuild database or teh database doesn't exist
-    if (isRebuildDatabase[0].isBuild || !isDB[0][0]) {
+    // If user selected to rebuild database or the database doesn't exist
+    if (isRebuildDatabase[0].isBuild) {
         schemaSql.forEach(async (element) => {
             // Make sure the element isnt an empty string (Any space between commands or trailing white space)
             if (element.trim())
@@ -97,7 +96,7 @@ async function init() {
         }
     }
     await titler.displayTitle('exit');
-    // Close connection to database
+    // Close command-line connection to database
     db.end();
 }
 async function updateInterrogator(db) {
