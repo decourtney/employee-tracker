@@ -22,7 +22,7 @@ Deployed Project: Not Currently Deployed
 
 <br>
   <div>  
-      <img src="./assets/workforce-tracker.png" target="_blank" alt="Workforce Tacker Main Menu" style="max-width: 768px; display: block;" />  
+      <img src="./assets/workforce-tracker-ss.png" target="_blank" alt="Workforce Tacker Main Menu" style="max-width: 768px; display: block;" />  
   </div>
 <br>
 
